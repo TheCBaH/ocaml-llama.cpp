@@ -1,0 +1,33 @@
+{
+    "ocaml.repl.path": "make",
+    "ocaml.repl.args": ["utop"],
+    "ocaml.sandbox": {
+        "kind": "opam",
+        "switch": "default"
+    },
+    "cSpell.words": [
+        "Bytesrw",
+        "cgraph",
+        "Cmdliner",
+        "Ctypes",
+        "docv",
+        "eprintf",
+        "fname",
+        "fprintf",
+        "funptr",
+        "getf",
+        "Ggml",
+        "Jsont",
+        "nativeint",
+        "ocamlformat",
+        "opam",
+        "OPAMROOT",
+        "prerr",
+        "setf",
+        "sprintf",
+        "Stdlib",
+        "succ",
+        "utop",
+        "voidp"
+    ]
+}

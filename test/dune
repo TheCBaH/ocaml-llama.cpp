@@ -1,0 +1,15 @@
+(library
+ (name ggml_test)
+ (modules ggml_test)
+ (libraries ggml)
+ (preprocess
+  (pps ppx_expect))
+ (inline_tests))
+
+(library
+ (name model_explorer_test)
+ (modules model_explorer_test)
+ (libraries jsont.bytesrw ggml_model_explorer)
+ (preprocess
+  (pps ppx_expect))
+ (inline_tests))

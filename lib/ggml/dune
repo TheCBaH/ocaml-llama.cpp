@@ -1,0 +1,71 @@
+(rule
+ (alias libggml)
+ (deps
+  (file %{project_root}/lib/llama.cpp/Makefile)
+  (source_tree %{project_root}/vendored/llama.cpp))
+ (targets
+  ggml.h
+  ggml-alloc.h
+  ggml-backend.h
+  ggml-cpu.h
+  gguf.h
+  libggml.a
+  dllggml.so)
+ (action
+  (no-infer
+   (progn
+    (run
+     make
+     -C
+     %{project_root}/lib/llama.cpp
+     LLAMA.CPP=%{project_root}/vendored/llama.cpp)
+    (copy %{project_root}/vendored/llama.cpp/libggml.a libggml.a)
+    (copy
+     %{project_root}/vendored/llama.cpp/build.ml.shared/bin/libggml.so
+     dllggml.so)
+    (copy
+     %{project_root}/vendored/llama.cpp/ggml/include/ggml-alloc.h
+     ggml-alloc.h)
+    (copy
+     %{project_root}/vendored/llama.cpp/ggml/include/ggml-backend.h
+     ggml-backend.h)
+    (copy
+     %{project_root}/vendored/llama.cpp/ggml/include/ggml-cpu.h
+     ggml-cpu.h)
+    (copy %{project_root}/vendored/llama.cpp/ggml/include/ggml.h ggml.h)
+    (copy %{project_root}/vendored/llama.cpp/ggml/include/gguf.h gguf.h)))))
+
+(library
+ (name ggml)
+ (libraries ggml_const)
+ (foreign_archives ggml)
+ (ctypes
+  (external_library_name libggml)
+  (build_flags_resolver
+   (vendored
+    (c_flags :standard)
+    (c_library_flags :standard -lstdc++ -fopenmp)))
+  (headers
+   (preamble
+    "#include \"ggml.h\"\n#include \"ggml-cpu.h\"\n#include \"gguf.h\""))
+  (type_description
+   (instance Types)
+   (functor Type_description))
+  (function_description
+   (concurrency unlocked)
+   (instance Functions)
+   (functor Function_description))
+  (function_description
+   (concurrency unlocked)
+   (instance Functions_gguf)
+   (functor Function_description_gguf))
+  (function_description
+   (concurrency unlocked)
+   (instance Functions_backend)
+   (functor Function_description_backend))
+  (function_description
+   (concurrency unlocked)
+   (instance Functions_cpu)
+   (functor Function_description_cpu))
+  (generated_types Types_generated)
+  (generated_entry_point C)))
