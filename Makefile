@@ -72,7 +72,7 @@ api.diff:
 	git -C vendored/llama.cpp/ fetch --depth 1000
 	git -C vendored/llama.cpp/ diff ${LLAMA.CPP_API.REV}...HEAD include >$@
 
-OCAML_GGML.REV=81af93918f79399173ec47874f6e9f70bc2af83c
+OCAML_GGML.REV=fe208f522906ae27f38098a2527c5c01da609c84
 ggml.sync:
 	git fetch https://github.com/TheCBaH/ocaml-ggml.git
 	git diff ${OCAML_GGML.REV}...FETCH_HEAD lib/ggml | git apply --check

@@ -11,14 +11,14 @@ module VocabPreType = struct
   type t =
     | Default
     | Llama3
-    | Deepseek_Llm
-    | Deepseek_Coder
+    | DeepseekLlm
+    | DeepseekCoder
     | Falcon
     | Mpt
     | Starcoder
     | Gpt2
     | Refact
-    | Command_R
+    | CommandR
     | Stablelm2
     | Qwen2
     | Olmo
@@ -33,31 +33,31 @@ module VocabPreType = struct
     | Smollm
     | Codeshell
     | Bloom
-    | Gpt3_Finnish
+    | Gpt3Finnish
     | Exaone
     | Chameleon
     | Minerva
-    | Deepseek3_Llm
+    | Deepseek3Llm
     | Gpt4o
     | Superbpe
     | Trillion
     | Bailingmoe
     | Llama4
     | Pixtral
-    | Seed_Coder
+    | SeedCoder
 
   let values =
     [
       (Default, "DEFAULT");
       (Llama3, "LLAMA3");
-      (Deepseek_Llm, "DEEPSEEK_LLM");
-      (Deepseek_Coder, "DEEPSEEK_CODER");
+      (DeepseekLlm, "DEEPSEEK_LLM");
+      (DeepseekCoder, "DEEPSEEK_CODER");
       (Falcon, "FALCON");
       (Mpt, "MPT");
       (Starcoder, "STARCODER");
       (Gpt2, "GPT2");
       (Refact, "REFACT");
-      (Command_R, "COMMAND_R");
+      (CommandR, "COMMAND_R");
       (Stablelm2, "STABLELM2");
       (Qwen2, "QWEN2");
       (Olmo, "OLMO");
@@ -72,18 +72,18 @@ module VocabPreType = struct
       (Smollm, "SMOLLM");
       (Codeshell, "CODESHELL");
       (Bloom, "BLOOM");
-      (Gpt3_Finnish, "GPT3_FINNISH");
+      (Gpt3Finnish, "GPT3_FINNISH");
       (Exaone, "EXAONE");
       (Chameleon, "CHAMELEON");
       (Minerva, "MINERVA");
-      (Deepseek3_Llm, "DEEPSEEK3_LLM");
+      (Deepseek3Llm, "DEEPSEEK3_LLM");
       (Gpt4o, "GPT4O");
       (Superbpe, "SUPERBPE");
       (Trillion, "TRILLION");
       (Bailingmoe, "BAILINGMOE");
       (Llama4, "LLAMA4");
       (Pixtral, "PIXTRAL");
-      (Seed_Coder, "SEED_CODER");
+      (SeedCoder, "SEED_CODER");
     ]
 
   let to_string t = List.assoc t values
@@ -110,7 +110,7 @@ end
 
 (** Token types (deprecated). *)
 module TokenType = struct
-  type t = Undefined | Normal | Unknown | Control | User_Defined | Unused | Byte
+  type t = Undefined | Normal | Unknown | Control | UserDefined | Unused | Byte
 
   let values =
     [
@@ -118,7 +118,7 @@ module TokenType = struct
       (Normal, "NORMAL");
       (Unknown, "UNKNOWN");
       (Control, "CONTROL");
-      (User_Defined, "USER_DEFINED");
+      (UserDefined, "USER_DEFINED");
       (Unused, "UNUSED");
       (Byte, "BYTE");
     ]
@@ -134,12 +134,12 @@ module TokenAttr = struct
     | Unused
     | Normal
     | Control
-    | User_Defined
+    | UserDefined
     | Byte
     | Normalized
     | Lstrip
     | Rstrip
-    | Single_Word
+    | SingleWord
 
   let values =
     [
@@ -148,12 +148,12 @@ module TokenAttr = struct
       (Unused, "UNUSED");
       (Normal, "NORMAL");
       (Control, "CONTROL");
-      (User_Defined, "USER_DEFINED");
+      (UserDefined, "USER_DEFINED");
       (Byte, "BYTE");
       (Normalized, "NORMALIZED");
       (Lstrip, "LSTRIP");
       (Rstrip, "RSTRIP");
-      (Single_Word, "SINGLE_WORD");
+      (SingleWord, "SINGLE_WORD");
     ]
 
   let to_string t = List.assoc t values
@@ -163,74 +163,74 @@ end
 (** Model file types. *)
 module Ftype = struct
   type t =
-    | All_F32
-    | Mostly_F16
-    | Mostly_Q4_0
-    | Mostly_Q4_1
-    | Mostly_Q8_0
-    | Mostly_Q5_0
-    | Mostly_Q5_1
-    | Mostly_Q2_K
-    | Mostly_Q3_K_S
-    | Mostly_Q3_K_M
-    | Mostly_Q3_K_L
-    | Mostly_Q4_K_S
-    | Mostly_Q4_K_M
-    | Mostly_Q5_K_S
-    | Mostly_Q5_K_M
-    | Mostly_Q6_K
-    | Mostly_IQ2_XXS
-    | Mostly_IQ2_XS
-    | Mostly_Q2_K_S
-    | Mostly_IQ3_XS
-    | Mostly_IQ3_XXS
-    | Mostly_IQ1_S
-    | Mostly_IQ4_NL
-    | Mostly_IQ3_S
-    | Mostly_IQ3_M
-    | Mostly_IQ2_S
-    | Mostly_IQ2_M
-    | Mostly_IQ4_XS
-    | Mostly_IQ1_M
-    | Mostly_BF16
-    | Mostly_TQ1_0
-    | Mostly_TQ2_0
+    | AllF32
+    | MostlyF16
+    | MostlyQ4_0
+    | MostlyQ4_1
+    | MostlyQ8_0
+    | MostlyQ5_0
+    | MostlyQ5_1
+    | MostlyQ2K
+    | MostlyQ3KS
+    | MostlyQ3KM
+    | MostlyQ3KL
+    | MostlyQ4KS
+    | MostlyQ4KM
+    | MostlyQ5KS
+    | MostlyQ5KM
+    | MostlyQ6K
+    | MostlyIQ2XXS
+    | MostlyIQ2XS
+    | MostlyQ2KS
+    | MostlyIQ3XS
+    | MostlyIQ3XXS
+    | MostlyIQ1S
+    | MostlyIQ4NL
+    | MostlyIQ3S
+    | MostlyIQ3M
+    | MostlyIQ2S
+    | MostlyIQ2M
+    | MostlyIQ4XS
+    | MostlyIQ1M
+    | MostlyBF16
+    | MostlyTQ1_0
+    | MostlyTQ2_0
     | Guessed
 
   let values =
     [
-      (All_F32, "ALL_F32");
-      (Mostly_F16, "MOSTLY_F16");
-      (Mostly_Q4_0, "MOSTLY_Q4_0");
-      (Mostly_Q4_1, "MOSTLY_Q4_1");
-      (Mostly_Q8_0, "MOSTLY_Q8_0");
-      (Mostly_Q5_0, "MOSTLY_Q5_0");
-      (Mostly_Q5_1, "MOSTLY_Q5_1");
-      (Mostly_Q2_K, "MOSTLY_Q2_K");
-      (Mostly_Q3_K_S, "MOSTLY_Q3_K_S");
-      (Mostly_Q3_K_M, "MOSTLY_Q3_K_M");
-      (Mostly_Q3_K_L, "MOSTLY_Q3_K_L");
-      (Mostly_Q4_K_S, "MOSTLY_Q4_K_S");
-      (Mostly_Q4_K_M, "MOSTLY_Q4_K_M");
-      (Mostly_Q5_K_S, "MOSTLY_Q5_K_S");
-      (Mostly_Q5_K_M, "MOSTLY_Q5_K_M");
-      (Mostly_Q6_K, "MOSTLY_Q6_K");
-      (Mostly_IQ2_XXS, "MOSTLY_IQ2_XXS");
-      (Mostly_IQ2_XS, "MOSTLY_IQ2_XS");
-      (Mostly_Q2_K_S, "MOSTLY_Q2_K_S");
-      (Mostly_IQ3_XS, "MOSTLY_IQ3_XS");
-      (Mostly_IQ3_XXS, "MOSTLY_IQ3_XXS");
-      (Mostly_IQ1_S, "MOSTLY_IQ1_S");
-      (Mostly_IQ4_NL, "MOSTLY_IQ4_NL");
-      (Mostly_IQ3_S, "MOSTLY_IQ3_S");
-      (Mostly_IQ3_M, "MOSTLY_IQ3_M");
-      (Mostly_IQ2_S, "MOSTLY_IQ2_S");
-      (Mostly_IQ2_M, "MOSTLY_IQ2_M");
-      (Mostly_IQ4_XS, "MOSTLY_IQ4_XS");
-      (Mostly_IQ1_M, "MOSTLY_IQ1_M");
-      (Mostly_BF16, "MOSTLY_BF16");
-      (Mostly_TQ1_0, "MOSTLY_TQ1_0");
-      (Mostly_TQ2_0, "MOSTLY_TQ2_0");
+      (AllF32, "ALL_F32");
+      (MostlyF16, "MOSTLY_F16");
+      (MostlyQ4_0, "MOSTLY_Q4_0");
+      (MostlyQ4_1, "MOSTLY_Q4_1");
+      (MostlyQ8_0, "MOSTLY_Q8_0");
+      (MostlyQ5_0, "MOSTLY_Q5_0");
+      (MostlyQ5_1, "MOSTLY_Q5_1");
+      (MostlyQ2K, "MOSTLY_Q2_K");
+      (MostlyQ3KS, "MOSTLY_Q3_K_S");
+      (MostlyQ3KM, "MOSTLY_Q3_K_M");
+      (MostlyQ3KL, "MOSTLY_Q3_K_L");
+      (MostlyQ4KS, "MOSTLY_Q4_K_S");
+      (MostlyQ4KM, "MOSTLY_Q4_K_M");
+      (MostlyQ5KS, "MOSTLY_Q5_K_S");
+      (MostlyQ5KM, "MOSTLY_Q5_K_M");
+      (MostlyQ6K, "MOSTLY_Q6_K");
+      (MostlyIQ2XXS, "MOSTLY_IQ2_XXS");
+      (MostlyIQ2XS, "MOSTLY_IQ2_XS");
+      (MostlyQ2KS, "MOSTLY_Q2_K_S");
+      (MostlyIQ3XS, "MOSTLY_IQ3_XS");
+      (MostlyIQ3XXS, "MOSTLY_IQ3_XXS");
+      (MostlyIQ1S, "MOSTLY_IQ1_S");
+      (MostlyIQ4NL, "MOSTLY_IQ4_NL");
+      (MostlyIQ3S, "MOSTLY_IQ3_S");
+      (MostlyIQ3M, "MOSTLY_IQ3_M");
+      (MostlyIQ2S, "MOSTLY_IQ2_S");
+      (MostlyIQ2M, "MOSTLY_IQ2_M");
+      (MostlyIQ4XS, "MOSTLY_IQ4_XS");
+      (MostlyIQ1M, "MOSTLY_IQ1_M");
+      (MostlyBF16, "MOSTLY_BF16");
+      (MostlyTQ1_0, "MOSTLY_TQ1_0");
+      (MostlyTQ2_0, "MOSTLY_TQ2_0");
       (Guessed, "GUESSED");
     ]
 
@@ -239,7 +239,7 @@ end
 
 (** RoPE scaling types. *)
 module RopeScalingType = struct
-  type t = Unspecified | None | Linear | Yarn | Longrope | Max_Value
+  type t = Unspecified | None | Linear | Yarn | Longrope | MaxValue
 
   let values =
     [
@@ -248,7 +248,7 @@ module RopeScalingType = struct
       (Linear, "LINEAR");
       (Yarn, "YARN");
       (Longrope, "LONGROPE");
-      (Max_Value, "MAX_VALUE");
+      (MaxValue, "MAX_VALUE");
     ]
 
   let to_string t = List.assoc t values
@@ -266,9 +266,9 @@ end
 
 (** Attention types. *)
 module AttentionType = struct
-  type t = Unspecified | Causal | Non_Causal
+  type t = Unspecified | Causal | NonCausal
 
-  let values = [ (Unspecified, "UNSPECIFIED"); (Causal, "CAUSAL"); (Non_Causal, "NON_CAUSAL") ]
+  let values = [ (Unspecified, "UNSPECIFIED"); (Causal, "CAUSAL"); (NonCausal, "NON_CAUSAL") ]
   let to_string t = List.assoc t values
 end
 
