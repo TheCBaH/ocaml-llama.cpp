@@ -64,4 +64,18 @@ model-explorer.install:
 patch:
 	git -C vendored/llama.cpp apply < patches/graph_callback_llama.patch
 
-.PHONY: default clean format models patch run top utop model-explorer.install
+create.patch:
+	git -C vendored/llama.cpp diff > patches/graph_callback_llama.patch
+
+LLAMA.CPP_API.REV=10d2af0eaa0aafd7c6577b279dfa5221ff44a63f
+api.diff:
+	git -C vendored/llama.cpp/ fetch --depth 1000
+	git -C vendored/llama.cpp/ diff ${LLAMA.CPP_API.REV}...HEAD include >$@
+
+OCAML_GGML.REV=81af93918f79399173ec47874f6e9f70bc2af83c
+ggml.sync:
+	git fetch https://github.com/TheCBaH/ocaml-ggml.git
+	git diff ${OCAML_GGML.REV}...FETCH_HEAD lib/ggml | git apply --check
+	git diff ${OCAML_GGML.REV}...FETCH_HEAD lib/ggml | git apply --3way
+
+.PHONY: api.diff default clean format models create.patch patch run top utop model-explorer.install

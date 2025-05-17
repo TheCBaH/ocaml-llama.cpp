@@ -478,9 +478,11 @@ module Functions (F : Ctypes.FOREIGN) = struct
       - [n_backends] Number of backends in the arrays.
       - [graph_size] Estimated maximum graph size (nodes).
       - [parallel] Whether to allow parallel execution across backends.
+      - [op_offload] Whether to enable operation offloading.
       - returns The new backend scheduler. *)
   let sched_new =
-    foreign (ns "sched_new") (ptr backend_t @-> ptr buffer_type_t @-> int @-> size_t @-> bool @-> returning sched_t)
+    foreign (ns "sched_new")
+      (ptr backend_t @-> ptr buffer_type_t @-> int @-> size_t @-> bool @-> bool @-> returning sched_t)
 
   (** [sched_free sched] frees the backend scheduler.
       - [sched] The scheduler to free. *)

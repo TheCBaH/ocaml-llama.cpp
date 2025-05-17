@@ -8,6 +8,7 @@
   ggml-alloc.h
   ggml-backend.h
   ggml-cpu.h
+  ggml-opt.h
   gguf.h
   libggml.a
   dllggml.so)
@@ -32,12 +33,15 @@
     (copy
      %{project_root}/vendored/llama.cpp/ggml/include/ggml-cpu.h
      ggml-cpu.h)
+    (copy
+     %{project_root}/vendored/llama.cpp/ggml/include/ggml-opt.h
+     ggml-opt.h)
     (copy %{project_root}/vendored/llama.cpp/ggml/include/ggml.h ggml.h)
     (copy %{project_root}/vendored/llama.cpp/ggml/include/gguf.h gguf.h)))))
 
 (library
  (name ggml)
- (libraries ggml_const)
+ (libraries ggml_const ctypes-foreign)
  (foreign_archives ggml)
  (ctypes
   (external_library_name libggml)
@@ -47,7 +51,7 @@
     (c_library_flags :standard -lstdc++ -fopenmp)))
   (headers
    (preamble
-    "#include \"ggml.h\"\n#include \"ggml-cpu.h\"\n#include \"gguf.h\""))
+    "#include \"ggml.h\"\n#include \"ggml-cpu.h\"\n#include \"ggml-opt.h\"\n#include \"gguf.h\""))
   (type_description
    (instance Types)
    (functor Type_description))

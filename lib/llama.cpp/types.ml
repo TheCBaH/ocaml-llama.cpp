@@ -43,6 +43,8 @@ module VocabPreType = struct
     | Trillion
     | Bailingmoe
     | Llama4
+    | Pixtral
+    | Seed_Coder
 
   let values =
     [
@@ -80,6 +82,8 @@ module VocabPreType = struct
       (Trillion, "TRILLION");
       (Bailingmoe, "BAILINGMOE");
       (Llama4, "LLAMA4");
+      (Pixtral, "PIXTRAL");
+      (Seed_Coder, "SEED_CODER");
     ]
 
   let to_string t = List.assoc t values

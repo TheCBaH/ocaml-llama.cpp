@@ -65,6 +65,11 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let model_load_from_splits =
     foreign (ns "model_load_from_splits") (ptr string @-> size_t @-> ModelParams.t @-> returning model)
 
+  (** [model_save_to_file model path_model] saves the model to a file.
+      - [model] The model to save.
+      - [path_model] The path to save the model to. *)
+  let model_save_to_file = foreign (ns "model_save_to_file") (model @-> string @-> returning void)
+
   (** [model_free model] frees the memory associated with a model.
       - [model] The model to free. *)
   let model_free = foreign (ns "model_free") (model @-> returning void)
@@ -421,16 +426,17 @@ module Functions (F : Ctypes.FOREIGN) = struct
       - [batch] The batch to free. *)
   let batch_free = foreign (ns "batch_free") (Batch.t @-> returning void)
 
-  (** [encode ctx batch] processes a batch of tokens with the encoder part of the encoder-decoder model. Stores the
-      encoder output internally for later use by the decoder cross-attention layers.
+  (** [encode ctx batch] Process a batch of tokens. In contrast to {!decode} - this call does not use KV cache. For
+      encode-decoder contexts, processes the batch using the encoder. Can store the encoder output internally for later
+      use by the decoder's cross-attention layers.
       - [ctx] The context.
       - [batch] The batch to process.
       - returns 0 on success.
       - returns < 0 on error. The KV cache state is restored to the state before this call. *)
   let encode = foreign (ns "encode") (context @-> Batch.t @-> returning int32_t)
 
-  (** [decode ctx batch] process the tokens in the batch. Positive return values do not mean a fatal error, but rather a
-      warning.
+  (** [decode ctx batch] Process a batch of tokens. Requires KV cache. For encode-decoder contexts, processes the batch
+      using the decoder. Positive return values do not mean a fatal error, but rather a warning.
       - [ctx] The context.
       - [batch] The batch to process.
       - returns 0 on success.
@@ -680,7 +686,7 @@ module Functions (F : Ctypes.FOREIGN) = struct
   (** [sampler_init_dist] initialize a distribution sampler. *)
   let sampler_init_dist = foreign (ns "sampler_init_dist") (uint32_t @-> returning sampler)
 
-  (** Initialize a Top-K sampler. *)
+  (** Initialize a Top-K sampler. Setting k <= 0 makes this a noop. *)
   let sampler_init_top_k = foreign (ns "sampler_init_top_k") (int32_t @-> returning sampler)
 
   (** Initialize a Top-P (nucleus) sampler. *)
@@ -794,4 +800,36 @@ module Functions (F : Ctypes.FOREIGN) = struct
   (** [perf_sampler_reset] reset performance data for the sampler chain. NOTE: Works only with samplers constructed via
       {!sampler_chain_init}. *)
   let perf_sampler_reset = foreign (ns "perf_sampler_reset") (sampler @-> returning void)
+
+  (* Training *)
+
+  (** [opt_param_filter_all tensor userdata] is a default filter that always returns true, indicating all tensors are
+      trainable.
+      - [tensor] The tensor to check.
+      - [userdata] User data (unused).
+      - returns True. *)
+  let opt_param_filter_all =
+    foreign (ns "opt_param_filter_all") (ptr Ggml.C.Types.Tensor.t @-> ptr void @-> returning bool)
+
+  (** [opt_init lctx model lopt_params] initializes the optimization context.
+      - [lctx] The llama context.
+      - [model] The llama model.
+      - [lopt_params] Optimization parameters. *)
+  let opt_init = foreign (ns "opt_init") (context @-> model @-> OptParams.t @-> returning void)
+
+  (** [opt_epoch lctx dataset result_train result_eval idata_split callback_train callback_eval] runs one optimization
+      epoch.
+      - [lctx] The llama context.
+      - [dataset] The training dataset. (Placeholder type: ptr void for ggml_opt_dataset_t)
+      - [result_train] Training results. (Placeholder type: ptr void for ggml_opt_result_t)
+      - [result_eval] Evaluation results. (Placeholder type: ptr void for ggml_opt_result_t)
+      - [idata_split] Data split index.
+      - [callback_train] Training epoch callback. (Placeholder type: ptr void for ggml_opt_epoch_callback)
+      - [callback_eval] Evaluation epoch callback. (Placeholder type: ptr void for ggml_opt_epoch_callback) *)
+  let opt_epoch =
+    foreign (ns "opt_epoch")
+      (context @-> ptr void (* ggml_opt_dataset_t *) @-> ptr void (* ggml_opt_result_t *)
+      @-> ptr void (* ggml_opt_result_t *) @-> int64_t
+      @-> ptr void (* ggml_opt_epoch_callback *) @-> ptr void
+      (* ggml_opt_epoch_callback *) @-> returning void)
 end

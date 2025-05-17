@@ -139,13 +139,14 @@ module Types (F : Ctypes.TYPE) = struct
     let () = seal t
   end
 
-  type cgraph = [ `Cgraph ] structure typ
   (** The computation graph structure. *)
-
-  let cgraph_struct : cgraph = structure (ns "cgraph")
+  let cgraph_struct : [ `Cgraph ] structure typ = structure (ns "cgraph")
 
   (** Pointer to the computation graph structure. *)
   let cgraph = ptr cgraph_struct
+
+  let tensor_struct : [ `Tensor ] structure typ = structure (ns "tensor")
+  let tensor = ptr tensor_struct
 
   (** Callback function for graph computation. *)
   let graph_compute_callback_type = ptr void @-> cgraph @-> bool @-> returning bool
@@ -229,8 +230,11 @@ module Types (F : Ctypes.TYPE) = struct
     (** Type of value tensors. *)
     let type_v = field t "type_v" ggml_type
 
-    (** Whether to compute logits for all tokens. *)
-    let logits_all = field t "logits_all" bool
+    (** Callback function to signal an abort condition. *)
+    let abort_callback = field t "abort_callback" abort_callback
+
+    (** User data for the abort callback. *)
+    let abort_callback_data = field t "abort_callback_data" (ptr void)
 
     (** Whether to compute embeddings. *)
     let embeddings = field t "embeddings" bool
@@ -244,11 +248,8 @@ module Types (F : Ctypes.TYPE) = struct
     (** Whether to disable performance optimizations. *)
     let no_perf = field t "no_perf" bool
 
-    (** Callback function to signal an abort condition. *)
-    let abort_callback = field t "abort_callback" abort_callback
-
-    (** User data for the abort callback. *)
-    let abort_callback_data = field t "abort_callback_data" (ptr void)
+    (** Whether to offload host tensor operations to device. *)
+    let op_offload = field t "op_offload" bool
 
     let graph_callback = field t "graph_callback" graph_compute_callback
     let graph_callback_data = field t "graph_callback_data" (ptr void)
@@ -378,6 +379,24 @@ module Types (F : Ctypes.TYPE) = struct
     let t : t structure typ = structure (ns "perf_sampler_data")
     let t_sample_ms = field t "t_sample_ms" double
     let n_sample = field t "n_sample" int32_t
+    let () = seal t
+  end
+
+  (** Function pointer type for filtering trainable parameters. *)
+  let opt_param_filter = static_funptr (tensor @-> ptr void @-> returning bool)
+
+  (** Optimization parameters structure. *)
+  module OptParams = struct
+    type t
+
+    let t : t structure typ = structure (ns "opt_params")
+    let n_ctx_train = field t "n_ctx_train" uint32_t
+    let param_filter = field t "param_filter" opt_param_filter
+    let param_filter_ud = field t "param_filter_ud" (ptr void)
+
+    (* TODO: Define Ggml.C.Types.Opt.get_optimizer_params in ggml bindings *)
+    let get_opt_pars = field t "get_opt_pars" (ptr void) (* ggml_opt_get_optimizer_params *)
+    let get_opt_pars_ud = field t "get_opt_pars_ud" (ptr void)
     let () = seal t
   end
 end
