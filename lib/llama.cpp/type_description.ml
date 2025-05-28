@@ -251,8 +251,10 @@ module Types (F : Ctypes.TYPE) = struct
     (** Whether to offload host tensor operations to device. *)
     let op_offload = field t "op_offload" bool
 
-    (** Whether to use full-size SWA cache (https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055). *)
+    (** Whether to use full-size SWA cache (https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055).
+    *)
     let swa_full = field t "swa_full" bool
+
     let graph_callback = field t "graph_callback" graph_compute_callback
     let graph_callback_data = field t "graph_callback_data" (ptr void)
     let () = seal t
