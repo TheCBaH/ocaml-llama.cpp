@@ -67,7 +67,7 @@ patch:
 create.patch:
 	git -C vendored/llama.cpp diff HEAD > patches/graph_callback_llama.patch
 
-LLAMA.CPP_API.REV=10d2af0eaa0aafd7c6577b279dfa5221ff44a63f
+LLAMA.CPP_API.REV=6f180b915c9ed9ec0c240b5dcd64644988fb5e82
 api.diff:
 	git -C vendored/llama.cpp/ fetch --depth 1000
 	git -C vendored/llama.cpp/ diff ${LLAMA.CPP_API.REV}...HEAD include >$@

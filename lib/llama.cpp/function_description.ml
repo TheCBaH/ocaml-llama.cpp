@@ -296,16 +296,6 @@ module Functions (F : Ctypes.FOREIGN) = struct
 
   (* KV Cache *)
 
-  (** [kv_cache_view_init] create an empty KV cache view. (use only for debugging purposes) *)
-  let kv_cache_view_init = foreign (ns "kv_cache_view_init") (context @-> int32_t @-> returning KvCacheView.t)
-
-  (** [kv_cache_view_free] free a KV cache view. (use only for debugging purposes) *)
-  let kv_cache_view_free = foreign (ns "kv_cache_view_free") (ptr KvCacheView.t @-> returning void)
-
-  (** [kv_cache_view_update] update the KV cache view structure with the current state of the KV cache. (use only for
-      debugging purposes) *)
-  let kv_cache_view_update = foreign (ns "kv_cache_view_update") (context @-> ptr KvCacheView.t @-> returning void)
-
   (** [kv_self_n_tokens] returns the number of tokens in the KV cache (slow, use only for debug) *)
   let kv_self_n_tokens = foreign (ns "kv_self_n_tokens") (context @-> returning int32_t)
 

@@ -282,7 +282,7 @@ end
 
 (** Model key-value override types. *)
 module ModelKvOverrideType = struct
-  type t = Int | Float | Bool | Str
+  type t = Int | Float | Bool | Str | ParallelSequences
 
   let values = [ (Int, "INT"); (Float, "FLOAT"); (Bool, "BOOL"); (Str, "STR") ]
   let to_string t = List.assoc t values
