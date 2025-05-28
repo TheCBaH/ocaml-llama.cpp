@@ -251,6 +251,10 @@ module Types (F : Ctypes.TYPE) = struct
     (** Whether to offload host tensor operations to device. *)
     let op_offload = field t "op_offload" bool
 
+    (** Whether to use full-size SWA cache (https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055).
+    *)
+    let swa_full = field t "swa_full" bool
+
     let graph_callback = field t "graph_callback" graph_compute_callback
     let graph_callback_data = field t "graph_callback_data" (ptr void)
     let () = seal t
@@ -302,31 +306,6 @@ module Types (F : Ctypes.TYPE) = struct
     let t : t structure typ = structure (ns "chat_message")
     let role = field t "role" string (* const char * *)
     let content = field t "content" string (* const char * *)
-    let () = seal t
-  end
-
-  (** KV cache view cell structure. *)
-  module KvCacheViewCell = struct
-    type t
-
-    let t : t structure typ = structure (ns "kv_cache_view_cell")
-    let pos = field t "pos" pos
-    let () = seal t
-  end
-
-  (** KV cache view structure. *)
-  module KvCacheView = struct
-    type t
-
-    let t : t structure typ = structure (ns "kv_cache_view")
-    let n_cells = field t "n_cells" int32_t
-    let n_seq_max = field t "n_seq_max" int32_t
-    let token_count = field t "token_count" int32_t
-    let used_cells = field t "used_cells" int32_t
-    let max_contiguous = field t "max_contiguous" int32_t
-    let max_contiguous_idx = field t "max_contiguous_idx" int32_t
-    let cells = field t "cells" (ptr KvCacheViewCell.t)
-    let cells_sequences = field t "cells_sequences" (ptr seq_id)
     let () = seal t
   end
 
