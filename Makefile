@@ -64,6 +64,9 @@ model-explorer.install:
 patch:
 	git -C vendored/llama.cpp apply < patches/graph_callback_llama.patch
 
+sync:
+	git -C vendored/llama.cpp apply --3way < patches/graph_callback_llama.patch
+
 create.patch:
 	git -C vendored/llama.cpp diff HEAD > patches/graph_callback_llama.patch
 
