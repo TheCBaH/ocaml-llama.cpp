@@ -7,6 +7,7 @@
 ## Get started
 * [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=973446237)
 * run
+  * `make patch` apply patches
   * `make build` build llama.cpp and ocaml bindings
   * `make models` download models
   * `make simple` runs simple LLM model
