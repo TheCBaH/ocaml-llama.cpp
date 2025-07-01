@@ -29,6 +29,9 @@ module Types (F : Ctypes.TYPE) = struct
   (** Unary operations. Corresponds to C `enum ggml_unary_op`. *)
   let unary_op = make_enum "unary_op" Types.UnaryOp.values
 
+  (** Gated Linear Unit operations. Corresponds to C `enum ggml_glu_op`. *)
+  let glu_op = make_enum "glu_op" Types.GluOp.values
+
   (** Object types. Corresponds to C `enum ggml_object_type`. *)
   let object_type = make_enum "object_type" Types.ObjectType.values
 
@@ -46,6 +49,9 @@ module Types (F : Ctypes.TYPE) = struct
 
   (** Scale mode for interpolation. Corresponds to C `enum ggml_scale_mode`. *)
   let scale_mode = make_enum "scale_mode" Types.ScaleMode.values
+
+  (** Scheduler priorities. Corresponds to C `enum ggml_sched_priority`. *)
+  let sched_priority = make_enum "sched_priority" ~_NAME:"SCHED_PRIO" Types.SchedPriority.values
 
   (** Opaque object structure. Corresponds to C `struct ggml_object`. *)
   let _object' : [ `Object ] structure typ = structure (ns "object")

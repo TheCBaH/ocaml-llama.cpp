@@ -91,6 +91,11 @@ module Functions (F : Ctypes.FOREIGN) = struct
       - returns The name of the unary operation. *)
   let unary_op_name = foreign (ns "unary_op_name") (unary_op @-> returning string)
 
+  (** [glu_op_name op] returns the name of the ggml GLU operation.
+      - [op] The ggml GLU operation.
+      - returns The name of the GLU operation. *)
+  let glu_op_name = foreign (ns "glu_op_name") (glu_op @-> returning string)
+
   (** [op_desc tensor] returns a description of the operation that produced the tensor.
       - [tensor] The tensor.
       - returns A description string (unary op name or op name). *)
@@ -220,6 +225,12 @@ module Functions (F : Ctypes.FOREIGN) = struct
       - [tensor] The tensor.
       - returns True if contiguous channels, false otherwise. *)
   let is_contiguous_channels = foreign (ns "is_contiguous_channels") (tensor @-> returning bool)
+
+  (** [is_contiguous_rows tensor] true if the elements in dimension 0 are contiguous, or there is just 1 block of
+      elements.
+      - [tensor] The tensor.
+      - returns True if contiguous rows, false otherwise. *)
+  let is_contiguous_rows = foreign (ns "is_contiguous_rows") (tensor @-> returning bool)
 
   (** [are_same_shape t0 t1] checks if two tensors have the same shape.
       - [t0] First tensor.
@@ -356,6 +367,11 @@ module Functions (F : Ctypes.FOREIGN) = struct
       - [tensor] The tensor.
       - returns The unary operation enum value. *)
   let get_unary_op = foreign (ns "get_unary_op") (tensor @-> returning unary_op)
+
+  (** [get_glu_op tensor] returns the GLU operation associated with the tensor, if any.
+      - [tensor] The tensor.
+      - returns The GLU operation enum value. *)
+  let get_glu_op = foreign (ns "get_glu_op") (tensor @-> returning glu_op)
 
   (* Data Access *)
 
