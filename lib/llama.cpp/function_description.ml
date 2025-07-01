@@ -139,8 +139,8 @@ module Functions (F : Ctypes.FOREIGN) = struct
   (** [get_model ctx] gets the model associated with a context. *)
   let get_model = foreign (ns "get_model") (context @-> returning const_model)
 
-  (** [get_kv_self ctx] gets the KV cache associated with a context. *)
-  let get_kv_self = foreign (ns "get_kv_self") (context @-> returning kv_cache)
+  (** [get_memory ctx] gets the memory associated with a context. *)
+  let get_memory = foreign (ns "get_memory") (context @-> returning memory_t)
 
   (** [pooling_type ctx] gets the pooling type of the context. TODO: rename to llama_get_pooling_type *)
   let pooling_type = foreign (ns "pooling_type") (context @-> returning pooling_type)
@@ -166,8 +166,19 @@ module Functions (F : Ctypes.FOREIGN) = struct
   (** [model_n_head_kv model] gets the number of key/value heads in the model. *)
   let model_n_head_kv = foreign (ns "model_n_head_kv") (model @-> returning int32_t)
 
+  (** [model_n_swa model] gets the number of SWA heads in the model. *)
+  let model_n_swa = foreign (ns "model_n_swa") (model @-> returning int32_t)
+
   (** [model_rope_freq_scale_train model] gets the model's RoPE frequency scaling factor used during training. *)
   let model_rope_freq_scale_train = foreign (ns "model_rope_freq_scale_train") (model @-> returning float)
+
+  (** [model_n_cls_out model] returns the number of classifier outputs (only valid for classifier models). Undefined
+      behavior for non-classifier models. *)
+  let model_n_cls_out = foreign (ns "model_n_cls_out") (model @-> returning uint32_t)
+
+  (** [model_cls_label model i] returns label of classifier output by index (<n_cls_out). Returns nullptr if no label
+      provided. *)
+  let model_cls_label = foreign (ns "model_cls_label") (model @-> uint32_t @-> returning string)
 
   (* Vocab properties *)
 
@@ -294,58 +305,44 @@ module Functions (F : Ctypes.FOREIGN) = struct
     foreign (ns "apply_adapter_cvec")
       (context @-> ptr float @-> size_t @-> int32_t @-> int32_t @-> int32_t @-> returning int32_t)
 
-  (* KV Cache *)
+  (* Memory *)
 
-  (** [kv_self_n_tokens] returns the number of tokens in the KV cache (slow, use only for debug) *)
-  let kv_self_n_tokens = foreign (ns "kv_self_n_tokens") (context @-> returning int32_t)
+  (** [memory_clear mem data] clears the memory contents. If data is true, the data buffers will also be cleared
+      together with the metadata. *)
+  let memory_clear = foreign (ns "memory_clear") (memory_t @-> bool @-> returning void)
 
-  (** [kv_self_used_cells] returns the number of used KV cells (i.e. have at least one sequence assigned to them) *)
-  let kv_self_used_cells = foreign (ns "kv_self_used_cells") (context @-> returning int32_t)
-
-  (** [kv_self_clear] clear the KV cache - both cell info is erased and KV data is zeroed *)
-  let kv_self_clear = foreign (ns "kv_self_clear") (context @-> returning void)
-
-  (** [kv_self_seq_rm] removes all tokens that belong to the specified sequence and have positions in [p0, p1).
+  (** [memory_seq_rm mem seq_id p0 p1] removes all tokens that belong to the specified sequence and have positions in [p0, p1).
       Returns false if a partial sequence cannot be removed. Removing a whole sequence never fails.
       seq_id < 0 : match any sequence. p0 < 0 : [0, p1]. p1 < 0 : [p0, inf). *)
-  let kv_self_seq_rm = foreign (ns "kv_self_seq_rm") (context @-> seq_id @-> pos @-> pos @-> returning bool)
+  let memory_seq_rm = foreign (ns "memory_seq_rm") (memory_t @-> seq_id @-> pos @-> pos @-> returning bool)
 
-  (** [kv_self_seq_cp] copy all tokens that belong to the specified sequence to another sequence.
-      Note that this does not allocate extra KV cache memory - it simply assigns the tokens to the new sequence.
+  (** [memory_seq_cp mem seq_id_src seq_id_dst p0 p1] copy all tokens that belong to the specified sequence to another sequence.
       p0 < 0 : [0, p1]. p1 < 0 : [p0, inf). *)
-  let kv_self_seq_cp = foreign (ns "kv_self_seq_cp") (context @-> seq_id @-> seq_id @-> pos @-> pos @-> returning void)
+  let memory_seq_cp = foreign (ns "memory_seq_cp") (memory_t @-> seq_id @-> seq_id @-> pos @-> pos @-> returning void)
 
-  (** [kv_self_seq_keep] removes all tokens that do not belong to the specified sequence *)
-  let kv_self_seq_keep = foreign (ns "kv_self_seq_keep") (context @-> seq_id @-> returning void)
+  (** [memory_seq_keep mem seq_id] removes all tokens that do not belong to the specified sequence. *)
+  let memory_seq_keep = foreign (ns "memory_seq_keep") (memory_t @-> seq_id @-> returning void)
 
-  (** [kv_self_seq_add] adds relative position "delta" to all tokens that belong to the specified sequence and have positions in [p0, p1).
-      If the KV cache is RoPEd, the KV data is updated accordingly:
-        - lazily on next llama_decode()
-        - explicitly with llama_kv_self_update().
+  (** [memory_seq_add mem seq_id p0 p1 delta] adds relative position "delta" to all tokens that belong to the specified sequence and have positions in [p0, p1).
       p0 < 0 : [0, p1]. p1 < 0 : [p0, inf). *)
+  let memory_seq_add = foreign (ns "memory_seq_add") (memory_t @-> seq_id @-> pos @-> pos @-> pos @-> returning void)
 
-  (** [kv_self_seq_div] integer division of the positions by factor of `d > 1`.
-      If the KV cache is RoPEd, the KV data is updated accordingly:
-        - lazily on next llama_decode()
-        - explicitly with llama_kv_self_update().
+  (** [memory_seq_div mem seq_id p0 p1 d] integer division of the positions by factor of `d > 1`.
       p0 < 0 : [0, p1]. p1 < 0 : [p0, inf). *)
-  let kv_self_seq_add = foreign (ns "kv_self_seq_add") (context @-> seq_id @-> pos @-> pos @-> pos @-> returning void)
+  let memory_seq_div = foreign (ns "memory_seq_div") (memory_t @-> seq_id @-> pos @-> pos @-> int @-> returning void)
 
-  (** [kv_self_seq_pos_max] returns the largest position present in the KV cache for the specified sequence *)
-  let kv_self_seq_div = foreign (ns "kv_self_seq_div") (context @-> seq_id @-> pos @-> pos @-> int @-> returning void)
+  (** [memory_seq_pos_min mem seq_id] returns the smallest position present in the memory for the specified sequence.
+      This is typically non-zero only for SWA caches. Note that all positions in the range [pos_min, pos_max] are
+      guaranteed to be present in the memory. Return -1 if the sequence is empty. *)
+  let memory_seq_pos_min = foreign (ns "memory_seq_pos_min") (memory_t @-> seq_id @-> returning pos)
 
-  let kv_self_seq_pos_max = foreign (ns "kv_self_seq_pos_max") (context @-> seq_id @-> returning pos)
+  (** [memory_seq_pos_max mem seq_id] returns the largest position present in the memory for the specified sequence.
+      Note that all positions in the range [pos_min, pos_max] are guaranteed to be present in the memory. Return -1 if
+      the sequence is empty. *)
+  let memory_seq_pos_max = foreign (ns "memory_seq_pos_max") (memory_t @-> seq_id @-> returning pos)
 
-  (** [kv_self_defrag] defragment the KV cache. This will be applied:
-      - lazily on next llama_decode()
-      - explicitly with llama_kv_self_update() *)
-  let kv_self_defrag = foreign (ns "kv_self_defrag") (context @-> returning void)
-
-  (** [kv_self_can_shift] check if the context supports KV cache shifting *)
-  let kv_self_can_shift = foreign (ns "kv_self_can_shift") (context @-> returning bool)
-
-  (** [kv_self_update] apply the KV cache updates (such as K-shifts, defragmentation, etc.) *)
-  let kv_self_update = foreign (ns "kv_self_update") (context @-> returning void)
+  (** [memory_can_shift mem] check if the memory supports shifting. *)
+  let memory_can_shift = foreign (ns "memory_can_shift") (memory_t @-> returning bool)
 
   (* State / Sessions *)
 
@@ -488,8 +485,8 @@ module Functions (F : Ctypes.FOREIGN) = struct
   let get_embeddings_ith = foreign (ns "get_embeddings_ith") (context @-> int32_t @-> returning (ptr float))
 
   (** [get_embeddings_seq ctx seq_id] get the embeddings for a sequence id. Returns NULL if pooling_type is
-      LLAMA_POOLING_TYPE_NONE when pooling_type == LLAMA_POOLING_TYPE_RANK, returns float[1] with the rank of the
-      sequence otherwise: float[n_embd] (1-dimensional) *)
+      LLAMA_POOLING_TYPE_NONE when pooling_type == LLAMA_POOLING_TYPE_RANK, returns float[n_cls_out] with the rank(s) of
+      the sequence otherwise: float[n_embd] (1-dimensional) *)
   let get_embeddings_seq = foreign (ns "get_embeddings_seq") (context @-> seq_id @-> returning (ptr float))
 
   (* Vocab *)
@@ -533,6 +530,9 @@ module Functions (F : Ctypes.FOREIGN) = struct
 
   (** [vocab_get_add_eos vocab] check if the vocabulary adds an EOS token by default. *)
   let vocab_get_add_eos = foreign (ns "vocab_get_add_eos") (vocab @-> returning bool)
+
+  (** [vocab_get_add_sep vocab] check if the vocabulary adds a separator token by default. *)
+  let vocab_get_add_sep = foreign (ns "vocab_get_add_sep") (vocab @-> returning bool)
 
   (** [vocab_fim_pre vocab] get the fill-in-the-middle prefix token ID. *)
   let vocab_fim_pre = foreign (ns "vocab_fim_pre") (vocab @-> returning token)

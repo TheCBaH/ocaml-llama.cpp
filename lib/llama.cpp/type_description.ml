@@ -42,8 +42,10 @@ module Types (F : Ctypes.TYPE) = struct
   let const_model = ptr @@ const struct_model
   let struct_context : [ `Context ] structure typ = structure (ns "context")
   let context = ptr struct_context
+  let struct_memory_i : [ `MemoryI ] structure typ = structure (ns "memory_i")
+  let memory_t = ptr struct_memory_i
   let struct_kv_cache : [ `KvCache ] structure typ = structure (ns "kv_cache")
-  let kv_cache = ptr struct_kv_cache
+  let kv_cache = ptr struct_kv_cache (* DEPRECATED (use memory_t instead) *)
   let struct_adapter_lora : [ `AdapterLora ] structure typ = structure (ns "adapter_lora")
   let adapter_lora = ptr struct_adapter_lora
 
@@ -277,6 +279,7 @@ module Types (F : Ctypes.TYPE) = struct
     let imatrix = field t "imatrix" (ptr void)
     let kv_overrides = field t "kv_overrides" (ptr void) (* Assuming C void* maps to vector *)
     let tensor_types = field t "tensor_types" (ptr void) (* Assuming C void* maps to vector *)
+    let prune_layers = field t "prune_layers" (ptr void)
     let () = seal t
   end
 
