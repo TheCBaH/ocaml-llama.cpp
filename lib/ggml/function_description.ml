@@ -1570,18 +1570,6 @@ module Functions (F : Ctypes.FOREIGN) = struct
       - returns The upscaled tensor. *)
   let upscale = foreign (ns "upscale") (context @-> tensor @-> int @-> scale_mode @-> returning tensor)
 
-  (** [upscale_ext ctx a ne0 ne1 ne2 ne3 mode] performs upscaling to the specified dimensions using the specified mode.
-      - [ctx] The context.
-      - [a] Input tensor.
-      - [ne0] Target size for dimension 0.
-      - [ne1] Target size for dimension 1.
-      - [ne2] Target size for dimension 2.
-      - [ne3] Target size for dimension 3.
-      - [mode] The scaling mode.
-      - returns The upscaled tensor. *)
-  let upscale_ext =
-    foreign (ns "upscale_ext") (context @-> tensor @-> int @-> int @-> int @-> int @-> scale_mode @-> returning tensor)
-
   (** [pad ctx a p0 p1 p2 p3] pads each dimension of tensor `a` with zeros.
       - [ctx] The context.
       - [a] Input tensor.
@@ -1687,19 +1675,6 @@ module Functions (F : Ctypes.FOREIGN) = struct
       - [c] Convolution kernel.
       - returns Result of the SSM convolution. *)
   let ssm_conv = foreign (ns "ssm_conv") (context @-> tensor @-> tensor @-> returning tensor)
-
-  (** [ssm_scan ctx s x dt A B C] performs Structured State Space Model (SSM) scan.
-      - [ctx] The context.
-      - [s] State tensor.
-      - [x] Input tensor.
-      - [dt] Delta t tensor.
-      - [A] State transition matrix A.
-      - [B] State transition matrix B.
-      - [C] Output matrix C.
-      - returns Result of the SSM scan. *)
-  let ssm_scan =
-    foreign (ns "ssm_scan")
-      (context @-> tensor @-> tensor @-> tensor @-> tensor @-> tensor @-> tensor @-> returning tensor)
 
   (** [win_part ctx a w] partitions tensor `a` into non-overlapping windows of size `w`.
       - [ctx] The context.
