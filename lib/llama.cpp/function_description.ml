@@ -151,18 +151,6 @@ module Functions (F : Ctypes.FOREIGN) = struct
   (** [model_rope_type model] gets the RoPE type of the model. *)
   let model_rope_type = foreign (ns "model_rope_type") (model @-> returning rope_type)
 
-  (** [model_n_ctx_train model] gets the training context size of the model. *)
-  let model_n_ctx_train = foreign (ns "model_n_ctx_train") (model @-> returning int32_t)
-
-  (** [model_n_embd model] gets the embedding dimension of the model. *)
-  let model_n_embd = foreign (ns "model_n_embd") (model @-> returning int32_t)
-
-  (** [model_n_layer model] gets the number of layers in the model. *)
-  let model_n_layer = foreign (ns "model_n_layer") (model @-> returning int32_t)
-
-  (** [model_n_head model] gets the number of attention heads in the model. *)
-  let model_n_head = foreign (ns "model_n_head") (model @-> returning int32_t)
-
   (** [model_n_head_kv model] gets the number of key/value heads in the model. *)
   let model_n_head_kv = foreign (ns "model_n_head_kv") (model @-> returning int32_t)
 
@@ -184,9 +172,6 @@ module Functions (F : Ctypes.FOREIGN) = struct
 
   (** [vocab_type vocab] gets the type of the vocabulary. *)
   let vocab_type = foreign (ns "vocab_type") (vocab @-> returning vocab_type)
-
-  (** [vocab_n_tokens vocab] gets the number of tokens in the vocabulary. *)
-  let vocab_n_tokens = foreign (ns "vocab_n_tokens") (vocab @-> returning int32_t)
 
   (* Model metadata *)
 
