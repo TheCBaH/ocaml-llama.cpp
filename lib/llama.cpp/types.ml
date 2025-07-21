@@ -1,90 +1,16 @@
 (** Vocabulary types. *)
 module VocabType = struct
-  type t = None | Spm | Bpe | Wpm | Ugm | Rwkv
-
-  let values = [ (None, "NONE"); (Spm, "SPM"); (Bpe, "BPE"); (Wpm, "WPM"); (Ugm, "UGM"); (Rwkv, "RWKV") ]
-  let to_string t = List.assoc t values
-end
-
-(** Pre-tokenization types. *)
-module VocabPreType = struct
   type t =
-    | Default
-    | Llama3
-    | DeepseekLlm
-    | DeepseekCoder
-    | Falcon
-    | Mpt
-    | Starcoder
-    | Gpt2
-    | Refact
-    | CommandR
-    | Stablelm2
-    | Qwen2
-    | Olmo
-    | Dbrx
-    | Smaug
-    | Poro
-    | Chatglm3
-    | Chatglm4
-    | Viking
-    | Jais
-    | Tekken
-    | Smollm
-    | Codeshell
-    | Bloom
-    | Gpt3Finnish
-    | Exaone
-    | Chameleon
-    | Minerva
-    | Deepseek3Llm
-    | Gpt4o
-    | Superbpe
-    | Trillion
-    | Bailingmoe
-    | Llama4
-    | Pixtral
-    | SeedCoder
+    | None  (** For models without vocab *)
+    | Spm  (** LLaMA tokenizer based on byte-level BPE with byte fallback *)
+    | Bpe  (** GPT-2 tokenizer based on byte-level BPE *)
+    | Wpm  (** BERT tokenizer based on WordPiece *)
+    | Ugm  (** T5 tokenizer based on Unigram *)
+    | Rwkv  (** RWKV tokenizer based on greedy tokenization *)
+    | Plamo2  (** PLaMo-2 tokenizer based on Aho-Corasick with dynamic programming *)
 
   let values =
-    [
-      (Default, "DEFAULT");
-      (Llama3, "LLAMA3");
-      (DeepseekLlm, "DEEPSEEK_LLM");
-      (DeepseekCoder, "DEEPSEEK_CODER");
-      (Falcon, "FALCON");
-      (Mpt, "MPT");
-      (Starcoder, "STARCODER");
-      (Gpt2, "GPT2");
-      (Refact, "REFACT");
-      (CommandR, "COMMAND_R");
-      (Stablelm2, "STABLELM2");
-      (Qwen2, "QWEN2");
-      (Olmo, "OLMO");
-      (Dbrx, "DBRX");
-      (Smaug, "SMAUG");
-      (Poro, "PORO");
-      (Chatglm3, "CHATGLM3");
-      (Chatglm4, "CHATGLM4");
-      (Viking, "VIKING");
-      (Jais, "JAIS");
-      (Tekken, "TEKKEN");
-      (Smollm, "SMOLLM");
-      (Codeshell, "CODESHELL");
-      (Bloom, "BLOOM");
-      (Gpt3Finnish, "GPT3_FINNISH");
-      (Exaone, "EXAONE");
-      (Chameleon, "CHAMELEON");
-      (Minerva, "MINERVA");
-      (Deepseek3Llm, "DEEPSEEK3_LLM");
-      (Gpt4o, "GPT4O");
-      (Superbpe, "SUPERBPE");
-      (Trillion, "TRILLION");
-      (Bailingmoe, "BAILINGMOE");
-      (Llama4, "LLAMA4");
-      (Pixtral, "PIXTRAL");
-      (SeedCoder, "SEED_CODER");
-    ]
+    [ (None, "NONE"); (Spm, "SPM"); (Bpe, "BPE"); (Wpm, "WPM"); (Ugm, "UGM"); (Rwkv, "RWKV"); (Plamo2, "PLAMO2") ]
 
   let to_string t = List.assoc t values
 end

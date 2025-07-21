@@ -13,7 +13,6 @@ module Types (F : Ctypes.TYPE) = struct
 
   (* Enums from llama_types.ml *)
   let vocab_type = make_enum "vocab_type" Types.VocabType.values
-  let vocab_pre_type = make_enum "vocab_pre_type" Types.VocabPreType.values
   let rope_type = make_enum "rope_type" Types.RopeType.values
   let token_type = make_enum "token_type" Types.TokenType.values
   let token_attr = make_enum "token_attr" Types.TokenAttr.values (* Note: Bit flags *)
@@ -257,6 +256,11 @@ module Types (F : Ctypes.TYPE) = struct
     *)
     let swa_full = field t "swa_full" bool
 
+    (** use a unified buffer across the input sequences when computing the attention try to disable when n_seq_max > 1
+        for improved performance when the sequences do not share a large prefix ref:
+        https://github.com/ggml-org/llama.cpp/pull/14363 *)
+    let kv_unified = field t "kv_unified" bool
+
     let graph_callback = field t "graph_callback" graph_compute_callback
     let graph_callback_data = field t "graph_callback_data" (ptr void)
     let () = seal t
@@ -351,6 +355,10 @@ module Types (F : Ctypes.TYPE) = struct
     let t_eval_ms = field t "t_eval_ms" double
     let n_p_eval = field t "n_p_eval" int32_t
     let n_eval = field t "n_eval" int32_t
+
+    (** number of times a ggml compute graph had been reused *)
+    let n_reused = field t "n_reused" int32_t
+
     let () = seal t
   end
 

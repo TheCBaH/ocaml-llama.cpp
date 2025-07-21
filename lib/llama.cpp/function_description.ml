@@ -510,6 +510,9 @@ module Functions (F : Ctypes.FOREIGN) = struct
   (** [vocab_pad vocab] get the padding token ID. *)
   let vocab_pad = foreign (ns "vocab_pad") (vocab @-> returning token)
 
+  (** [vocab_mask vocab] get the mask token ID. *)
+  let vocab_mask = foreign (ns "vocab_mask") (vocab @-> returning token)
+
   (** [vocab_get_add_bos vocab] check if the vocabulary adds a BOS token by default. *)
   let vocab_get_add_bos = foreign (ns "vocab_get_add_bos") (vocab @-> returning bool)
 
