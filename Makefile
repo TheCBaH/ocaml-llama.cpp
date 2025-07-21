@@ -81,8 +81,10 @@ ggml_api.diff:
 	git -C vendored/llama.cpp/ diff ${GGML_API.REV}...HEAD ggml/include >$@
 
 OCAML_GGML.REV=fe208f522906ae27f38098a2527c5c01da609c84
+OCAML_GGML.REV_SYNC=42aa6bdead5350f06d3cf36d70f70855e6673605
 ggml.sync:
 	git fetch https://github.com/TheCBaH/ocaml-ggml.git
+	git checkout ${OCAML_GGML.REV_SYNC} lib/ggml
 	git diff ${OCAML_GGML.REV}...FETCH_HEAD lib/ggml | git apply --check
 	git diff ${OCAML_GGML.REV}...FETCH_HEAD lib/ggml | git apply --3way
 
