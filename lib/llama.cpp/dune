@@ -9,10 +9,10 @@
    (progn
     (run make build-llama LLAMA.CPP=%{project_root}/vendored/llama.cpp)
     (copy
-     %{project_root}/vendored/llama.cpp/build.ml.static/src/libllama.a
+     %{project_root}/vendored/llama.cpp/build.llama-ml.static/src/libllama.a
      libllama.a)
     (copy
-     %{project_root}/vendored/llama.cpp/build.ml.shared/bin/libllama.so
+     %{project_root}/vendored/llama.cpp/build.llama-ml.shared/bin/libllama.so
      dllllama.so)
     (copy %{project_root}/vendored/llama.cpp/include/llama.h llama.h)))))
 

@@ -22,7 +22,7 @@
      LLAMA.CPP=%{project_root}/vendored/llama.cpp)
     (copy %{project_root}/vendored/llama.cpp/libggml.a libggml.a)
     (copy
-     %{project_root}/vendored/llama.cpp/build.ml.shared/bin/libggml.so
+     %{project_root}/vendored/llama.cpp/build.ggml-ml.shared/bin/libggml.so
      dllggml.so)
     (copy
      %{project_root}/vendored/llama.cpp/ggml/include/ggml-alloc.h
