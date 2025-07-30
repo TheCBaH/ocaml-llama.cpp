@@ -376,9 +376,18 @@ end
 
 (** Gated Linear Unit operations. *)
 module GluOp = struct
-  type t = Reglu | Geglu | Swiglu | Count
+  type t = Reglu | Geglu | Swiglu | GegluErf | GegluQuick | Count
 
-  let values = [ (Reglu, "REGLU"); (Geglu, "GEGLU"); (Swiglu, "SWIGLU"); (Count, "COUNT") ]
+  let values =
+    [
+      (Reglu, "REGLU");
+      (Geglu, "GEGLU");
+      (Swiglu, "SWIGLU");
+      (GegluErf, "GEGLU_ERF");
+      (GegluQuick, "GEGLU_QUICK");
+      (Count, "COUNT");
+    ]
+
   let to_string t = List.assoc t values
 end
 
@@ -445,9 +454,17 @@ end
 
 (** Scaling modes for upscale operations. *)
 module ScaleMode = struct
-  type t = Nearest | Bilinear
+  type t = Nearest | Bilinear | Count
 
-  let values = [ (Nearest, "NEAREST"); (Bilinear, "BILINEAR") ]
+  let values = [ (Nearest, "NEAREST"); (Bilinear, "BILINEAR"); (Count, "COUNT") ]
+  let to_string t = List.assoc t values
+end
+
+(** Scaling flags for interpolate operations. *)
+module ScaleFlag = struct
+  type t = AlignCorners
+
+  let values = [ (AlignCorners, "ALIGN_CORNERS") ]
   let to_string t = List.assoc t values
 end
 
@@ -529,7 +546,7 @@ module Opt = struct
 end
 
 (** Scheduling priorities. *)
-module SchedPriority = struct
+module SchedPrio = struct
   type t = Low | Normal | Medium | High
 
   let values = [ (Low, "LOW"); (Normal, "NORMAL"); (Medium, "MEDIUM"); (High, "HIGH") ]
